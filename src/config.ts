@@ -1,11 +1,12 @@
 import { PrismaClient } from "../generated/prisma/client.js";
 import { PrismaPg } from "@prisma/adapter-pg";
+import {z} from "zod";
 
-const databaseUrl = process.env.DATABASE_URL;
+export const env = z.object({
+    DATABASE_URL: z.string(),
+    PORT: z.coerce.number().default(3000),
+    JWT_SECRET: z.string()
+}).parse(process.env)
 
-if (!databaseUrl) {
-    throw new Error("DATABASE_URL is not set");
-}
-
-const adapter = new PrismaPg({ connectionString: databaseUrl });
+const adapter = new PrismaPg({ connectionString: env.DATABASE_URL });
 export const prisma = new PrismaClient({ adapter });

@@ -1,14 +1,21 @@
-# Elysia with Bun runtime
+# ClosedWAV API
 
-## Getting Started
-To get started with this template, simply paste this command into your terminal:
-```bash
-bun create elysia ./elysia-example
+## Installation
+To install the dependencies, run:
+```shell
+bun i
+```
+Create `.env` file and add .env variables as `.env.example` file.
+
+## Database
+To push the Prisma schema to the database, run:
+```shell
+prisma db push
 ```
 
 ## Development
 To start the development server run:
-```bash
+```shell
 bun run dev
 ```
 

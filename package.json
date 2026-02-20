@@ -1,22 +1,22 @@
 {
-  "name": "hot-dodster-api",
-  "version": "1.0.50",
+  "name": "closedwav",
+  "version": "1.0.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
+    "@elysiajs/jwt": "^1.4.0",
     "@elysiajs/openapi": "^1.4.14",
     "@prisma/adapter-pg": "^7.4.1",
     "@prisma/client": "^7.4.1",
-    "@types/bun": "^1.3.9",
     "dotenv": "^17.3.1",
     "elysia": "latest",
     "pg": "^8.18.0",
-    "prismabox": "^1.1.26"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "bun-types": "^1.3.9",
+    "@types/bun": "^1.3.9",
     "prisma": "^7.4.1"
   },
   "module": "src/index.js"

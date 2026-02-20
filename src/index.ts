@@ -1,6 +1,8 @@
-import {Elysia, t, status} from "elysia";
+import {Elysia, status} from "elysia";
 import openapi, {fromTypes} from "@elysiajs/openapi";
-import {user} from "./user";
+import {user} from "./api/user";
+import {env, prisma} from "./config";
+import {APIError, StatsResponse} from "./models";
 
 const app = new Elysia()
     .use(openapi({
@@ -9,16 +11,34 @@ const app = new Elysia()
         references: fromTypes("src/index.ts"),
         documentation: {
             info: {
-                title: "HotAPI",
-                description: "Hot Dodster API",
+                title: "ClosedAPI",
+                description: "ClosedWAV API",
                 version: "1.0.0"
             }
         }
     }))
-    .get("/", () => "Hello!", { response: t.Const("Hello!")})
-    .get("/secret", () => status(418, "Im teapot"))
+    .onError(({code, error}) => {
+        console.error(code, error);
+        if (code === "VALIDATION") {
+            return status(400, {message: error.message, code: "VALIDATION_ERROR"});
+        }
+    })
+    .get("/stats", async () => {
+        return {
+            uptime: process.uptime(),
+            users: await prisma.user.count(),
+            apiKeys: await prisma.apiKey.count()
+        }
+    }, {
+        response: {200: StatsResponse},
+        detail: {summary: "Server stats", description: "Returns server uptime and entity counts"}
+    })
     .use(user)
-    .listen(9000);
+    .model({APIError: APIError})
+
+
+    .listen(env.PORT)
+
 
 console.log(
   `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
