@@ -10,13 +10,18 @@ export const user = new Elysia({prefix: "/user", detail: {tags: ["User"]}})
     .use(jwtPlugin)
     .model({User: UserModel.userResponse})
     .post("/register", async ({body, jwt, cookie: {auth}}) => {
-        const user = await prisma.user.create({data: {username: body.username, passwordHash: await encryption.encrypt(body.password)}})
-        await createJwt(user.username, jwt.sign, auth)
-        return user
-    }, {
-        body: UserModel.registerBody,
-        response: UserModel.registerResponse,
-        detail: {summary: "Create user", description: "Creates a new user."},
+            const user = await prisma.user.create({
+                data: {
+                    username: body.username,
+                    passwordHash: await encryption.encrypt(body.password)
+                }
+            })
+            await createJwt(user.username, jwt.sign, auth)
+            return user
+        }, {
+            body: UserModel.registerBody,
+            response: UserModel.registerResponse,
+            detail: {summary: "Create user", description: "Creates a new user."},
         }
     )
     .post("/login", async ({jwt, body, cookie: {auth}}) => {

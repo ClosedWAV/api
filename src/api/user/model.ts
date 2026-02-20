@@ -29,8 +29,6 @@ export const UserModel = {
             username: t.String(),
             createdAt: t.Date({description: "Created At"}),
         }),
-        401: APIError,
-        404: APIError,
-        400: APIError,
+        400: APIError, 401: APIError, 404: APIError
     },
 }

@@ -19,27 +19,28 @@ const app = new Elysia()
     }))
     .onError(({code, error}) => {
         console.error(code, error);
-        if (code === "VALIDATION") {
-            return status(400, {message: error.message, code: "VALIDATION_ERROR"});
-        }
+        if (code === "VALIDATION") return status(400, {
+            message: error.message,
+            code: "VALIDATION_ERROR"
+        });
     })
-    .get("/stats", async () => {
-        return {
-            uptime: process.uptime(),
-            users: await prisma.user.count(),
-            apiKeys: await prisma.apiKey.count()
+    .get("/stats", async () =>
+            ({
+                uptime: process.uptime(),
+                users: await prisma.user.count(),
+                apiKeys: await prisma.apiKey.count()
+            }),
+        {
+            response: {200: StatsResponse},
+            detail: {
+                summary: "Server stats",
+                description: "Returns server uptime and entity counts"
+            }
         }
-    }, {
-        response: {200: StatsResponse},
-        detail: {summary: "Server stats", description: "Returns server uptime and entity counts"}
-    })
+    )
     .use(user)
     .model({APIError: APIError})
-
-
     .listen(env.PORT)
 
 
-console.log(
-  `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
-);
+console.log(`🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`);
