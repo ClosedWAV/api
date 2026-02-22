@@ -24,6 +24,24 @@ export const user = new Elysia({prefix: "/user", detail: {tags: ["User"]}})
             detail: {summary: "Create user", description: "Creates a new user."},
         }
     )
+    .get("/getMe", async ({jwt, cookie: {auth}}) => {
+        const token = auth.value
+        if (!token) return status(401, {message: "Not authorized", code: "UNAUTHORIZED"})
+
+        const payload = await jwt.verify(token as string)
+        if (!payload || typeof payload.username !== "string") return status(401, {
+            message: "Not authorized",
+            code: "UNAUTHORIZED"
+        })
+
+        const user = await prisma.user.findUnique({where: {username: payload.username}})
+        if (!user) return status(404, {message: "User not found", code: "NOT_FOUND"})
+
+        return {id: user.id, username: user.username, createdAt: user.createdAt}
+    }, {
+        response: UserModel.getMeResponse,
+        detail: {summary: "Get current user", description: "Returns the authenticated user's info based on JWT cookie."},
+    })
     .post("/login", async ({jwt, body, cookie: {auth}}) => {
         const user = await prisma.user.findUnique({where: {username: body.username}})
         if (!user || !user.id || !user.createdAt || !user.username) return status(404, {

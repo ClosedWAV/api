@@ -1,6 +1,7 @@
 import {Elysia, status} from "elysia";
 import openapi, {fromTypes} from "@elysiajs/openapi";
 import {user} from "./api/user";
+import {key} from "./api/key";
 import {env, prisma} from "./config";
 import {APIError, StatsResponse} from "./models";
 
@@ -39,6 +40,7 @@ const app = new Elysia()
         }
     )
     .use(user)
+    .use(key)
     .model({APIError: APIError})
     .listen(env.PORT)
 
